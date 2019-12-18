@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CSBI_test.Data;
 using CSBI_test.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CSBI_test.Controllers
 {
+    [Authorize]
     public class TasksController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -25,28 +27,10 @@ namespace CSBI_test.Controllers
             return View(await _context.Task.ToListAsync());
         }
 
-        // GET: Tasks/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var task = await _context.Task
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (task == null)
-            {
-                return NotFound();
-            }
-
-            return View(task);
-        }
 
         // GET: Tasks/Create
         public IActionResult Create()
         {
-            ViewBag.Managers = _context.Users.ToList();
             return View();
         }
 
@@ -55,7 +39,7 @@ namespace CSBI_test.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,StartTime,EndTime,ActivityStatus,DelegateUserId")] Models.Task task)
+        public async Task<IActionResult> Create([Bind("Id,Name,StartTime,EndTime,ActivityStatus")] Models.Task task)
         {
             if (ModelState.IsValid)
             {
@@ -155,7 +139,22 @@ namespace CSBI_test.Controllers
         // GET: Tasks/Expiring
         public async Task<IActionResult> Expiring()
         {
-            return View(await _context.Task.Where(x=>x.EndTime < DateTime.Now.AddHours(2)).ToListAsync());
+            return View(await _context.Task.Where(x => x.EndTime < DateTime.Now.AddHours(2)).Include(x => x.DelegatedManager).ToListAsync());
         }
+
+        // GET: Tasks/MyTasks
+        public async Task<IActionResult> MyTasks()
+        {
+            var response = await _context.Task
+                .Include(x => x.DelegatedManager)
+                .Where(x => x.DelegatedManager.Email == ControllerContext.HttpContext.User.Identity.Name)
+                .ToListAsync();
+
+            ViewBag.manager = ControllerContext.HttpContext.User.Identity.Name;
+
+            return View(response);
+        }
+
+
     }
 }

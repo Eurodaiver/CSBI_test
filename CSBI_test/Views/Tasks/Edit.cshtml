@@ -4,9 +4,9 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<h1>Редактирование</h1>
 
-<h4>Task</h4>
+<h4>Задачи</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -14,29 +14,24 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
+                <label class="control-label">Задача</label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="StartTime" class="control-label"></label>
+                <label class="control-label">Время начала</label>
                 <input asp-for="StartTime" class="form-control" />
                 <span asp-validation-for="StartTime" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="EndTime" class="control-label"></label>
+                <label class="control-label">Время окончания</label>
                 <input asp-for="EndTime" class="form-control" />
                 <span asp-validation-for="EndTime" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ActivityStatus" class="control-label"></label>
+                <label class="control-label">Статус задачи</label>
                 <input asp-for="ActivityStatus" class="form-control" />
                 <span asp-validation-for="ActivityStatus" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DelegateUserId" class="control-label"></label>
-                <input asp-for="DelegateUserId" class="form-control" />
-                <span asp-validation-for="DelegateUserId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
@@ -46,6 +41,6 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Назад к списку</a>
 </div>
 

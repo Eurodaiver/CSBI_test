@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CSBI_test.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSBI_test.Controllers
 {
+    [Authorize]
     public class AdminController : Controller
     {
 
@@ -20,6 +22,9 @@ namespace CSBI_test.Controllers
         {
             return View(_context.Users.ToList());
         }
+
+
+
     }
 
 

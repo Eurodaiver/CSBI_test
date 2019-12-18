@@ -1,0 +1,77 @@
+﻿@model IEnumerable<CSBI_test.Models.Task>
+
+@{
+    ViewData["Title"] = "MyTasks";
+}
+
+<h1>Мои задачи</h1>
+
+<table  class="table table-hover" id="app">
+    <thead class="thead-dark">
+        <tr>
+            <th>
+               Задача
+            </th>
+            <th>
+                Время начала
+            </th>
+            <th>
+                Время окончания
+            </th>
+            <th>
+                Статус задачи
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ActivityStatus)
+            </td>
+            <td class="text-right">
+                @if (item.ActivityStatus != "Задача завершена")
+                {
+                    <a class="btn btn-outline-success" v-on:click="closeTask(@item.Id);">Закртыть задачу</a>
+                }
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<script>
+    new Vue({
+        el: '#app',
+        vuetify: new Vuetify(),
+        data: {
+        },
+        methods: {
+            closeTask: function (taskid) {
+                console.log('Выбран менеджер');
+                axios({
+                    method: 'POST',
+                    url: '/api/Api/CloseMyTask/' + taskid,
+                    data: '',
+                    headers: { 'Content-Type': 'application/json; charset=utf-8' }
+                }).then(response => {
+                    if (response.data == 0) {
+                        console.log(response.data);
+                        alert('Задача успешно закрыта');
+                        window.location.reload()
+                    }
+                }).catch(e => { console.log(e) });
+            }
+        }
+    })
+</script>

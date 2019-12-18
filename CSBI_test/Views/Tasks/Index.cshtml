@@ -7,53 +7,102 @@
 <h1>Список задач</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="btn btn-outline-primary" asp-action="Create">Создать задачу</a>
 </p>
-<table class="table">
-    <thead>
+<table class="table table-hover" id="app">
+    <thead class="thead-dark">
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+               Задача
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.StartTime)
+               Время начала
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.EndTime)
+               Время окончания
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ActivityStatus)
+                Статус задачи
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DelegateUserId)
+                Менеджер
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ActivityStatus)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DelegateUserId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EndTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ActivityStatus)
+                </td>
+                <td>
+                    
+
+                    <select class="custom-select" v-model="selected" v-on:change="managerSelected(@item.Id);" title="Выберите менеждера">
+                        <option value="" hidden>@item.DelegatedManager?.Name  @item.DelegatedManager?.SurName</option>
+                        <option v-for="manager in managers" v-bind:value="manager">
+                            {{ manager.name + ' ' + manager.surName}}
+                        </option>
+                    </select>
+                </td>
+                <td class="text-right">
+                    <a class="btn btn-outline-primary" asp-action="Edit" asp-route-id="@item.Id">Edit</a> 
+                    <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+
+<script>
+    new Vue({
+        el: '#app',
+        vuetify: new Vuetify(),
+        data: {
+            managers: [],
+            selected: ''
+        },
+        methods: {
+            managerSelected: function (taskid) {
+                console.log('Выбран менеджер');
+                axios({
+                    method: 'POST',
+                    url: '/api/Api/SetTaskToManager/' + taskid,
+                    data: this.selected,
+                    headers: { 'Content-Type': 'application/json; charset=utf-8' }
+                }).then(response => {
+                    if (response.data == 0) {
+                        console.log(response.data);
+                        alert('Новый менеджер назначен на выполнение задачи');
+                    }
+                }).catch(e => { console.log(e) });
+
+            }
+        },
+        mounted() {
+
+            axios({
+                method: 'GET',
+                url: '/api/Api/GetManagers',
+                headers: { 'Content-Type': 'application/json; charset=utf-8' }
+            }).then(response => {
+                this.managers = response.data;
+                console.log(response.data);
+
+            }).catch(e => { console.log(e) });
+
+        }
+    })
+</script>
