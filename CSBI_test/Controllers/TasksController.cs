@@ -24,7 +24,7 @@ namespace CSBI_test.Controllers
         // GET: Tasks
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Task.ToListAsync());
+            return View(await _context.Task.Include(x=>x.DelegatedManager).ToListAsync());
         }
 
 

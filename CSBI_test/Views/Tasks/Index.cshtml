@@ -46,9 +46,7 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.ActivityStatus)
                 </td>
-                <td>
-                    
-
+                <td>                  
                     <select class="custom-select" v-model="selected" v-on:change="managerSelected(@item.Id);" title="Выберите менеждера">
                         <option value="" hidden>@item.DelegatedManager?.Name  @item.DelegatedManager?.SurName</option>
                         <option v-for="manager in managers" v-bind:value="manager">
