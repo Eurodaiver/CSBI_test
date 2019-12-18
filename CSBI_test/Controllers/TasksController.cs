@@ -24,6 +24,7 @@ namespace CSBI_test.Controllers
         // GET: Tasks
         public async Task<IActionResult> Index()
         {
+            //полный список задач с данными по менеджерам
             return View(await _context.Task.Include(x=>x.DelegatedManager).ToListAsync());
         }
 
@@ -139,18 +140,18 @@ namespace CSBI_test.Controllers
         // GET: Tasks/Expiring
         public async Task<IActionResult> Expiring()
         {
-            return View(await _context.Task.Where(x => x.EndTime < DateTime.Now.AddHours(2)).Include(x => x.DelegatedManager).ToListAsync());
+            //возвращаем список задач, у которых меньше чем через 2 часа истечет срок, просроченные не возвращаем
+            return View(await _context.Task.Where(x =>(DateTime.Now < x.EndTime) && (x.EndTime < DateTime.Now.AddHours(2))).Include(x => x.DelegatedManager).ToListAsync());
         }
 
         // GET: Tasks/MyTasks
         public async Task<IActionResult> MyTasks()
         {
+            //возвращаем список задач только для текущего пользователя 
             var response = await _context.Task
                 .Include(x => x.DelegatedManager)
                 .Where(x => x.DelegatedManager.Email == ControllerContext.HttpContext.User.Identity.Name)
                 .ToListAsync();
-
-            ViewBag.manager = ControllerContext.HttpContext.User.Identity.Name;
 
             return View(response);
         }

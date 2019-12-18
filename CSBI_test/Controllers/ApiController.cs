@@ -22,6 +22,7 @@ namespace CSBI_test.Controllers
             _context = manager;
         }
 
+        //получаем список пользователей
         // GET: api/Api/GetManagers
         [HttpGet]
         public IEnumerable<Manager> GetManagers()
@@ -29,6 +30,7 @@ namespace CSBI_test.Controllers
             return _context.Users.ToList();
         }
 
+        //определяет задачу конкретному менеджеру
         // POST: api/Api/SetTaskToManager/5
         [HttpPost("{taskid}")]
         public async Task<int> SetTaskToManager([FromBody] Manager manager, int taskid)
